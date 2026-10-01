@@ -1,0 +1,20 @@
+# 2026IDR
+
+## Claude (September 2026)
+
+### Summary
+
+The authors propose a mixed velocity discretization of the 1D–1V Vlasov–Poisson equations with immobile ions. The distribution is split as $f=f_0+\delta f$: the near-Maxwellian part $f_0$ is expanded in asymmetrically weighted (AW) Hermite functions, and the non-Maxwellian part $\delta f$ in Legendre polynomials on a finite interval $[v_a,v_b]$. Requiring the Vlasov derivative $d\delta f/dt$ to be orthogonal to the retained Hermite modes leaves the Hermite equations unchanged and lets the last Hermite coefficient drive every Legendre coefficient, so information passes from $f_0$ to $\delta f$ once filamentation reaches the Hermite truncation. The semi-discrete system conserves mass and energy for odd, and momentum for even, Hermite resolution $N_H$ (with symmetric bounds and zero shift), and all three for an unbounded Legendre domain; removing the coupling to the first three Legendre modes restores exact conservation in general. With central differences in space and implicit-midpoint time stepping, the mixed method is more accurate than Hermite-only or Legendre-only runs with equal velocity degrees of freedom and comparable runtime for the two-stream and bump-on-tail instabilities. The authors state that it gains nothing when the Legendre part spans the whole velocity domain, as in linear advection, where recurrence is set by the better expansion.
+
+### Contributions
+
+1. Derived the coupled system Eqs. (23)–(25), whose Legendre equations carry the source $-\frac{\alpha}{v_b-v_a}\mathcal{J}_{N_H,m}\sqrt{N_H/2}\,[\partial_x-\frac{2}{\alpha^2}\partial_x\phi]C_{N_H-1}$ with $\mathcal{J}_{N_H,m}=\int_{v_a}^{v_b}\psi_{N_H}\xi_m\,dv$, together with a weak Dirichlet penalty and an artificial Lenard–Bernstein-type collision operator acting only on modes of order at least 3.
+2. Showed by Hermite parity that, for $u=(v_a+v_b)/2$, $\mathcal{J}_{N_H,0}$ and $\mathcal{J}_{N_H,2}$ vanish for odd $N_H$ and $\mathcal{J}_{N_H,1}$ for even $N_H$, and confirmed this by quadrature for $-v_a=v_b=2,4,6$, where the nonvanishing integrals shrink by many orders of magnitude as the interval widens.
+3. In linear advection with $N_H=N_L=100$, showed the Legendre part compensating Hermite recurrence from $t\approx10$ until it recurs itself near $t\approx18$, and that the alternative closure $C_{N_H}=\sum_m B_m\mathcal{I}_{N_H,m}$ suppresses the nonphysical back-propagation of the Hermite cascade without delaying recurrence.
+4. For the two-stream instability, found that enforcing $\mathcal{J}_{N_H,0}=\mathcal{J}_{N_H,1}=\mathcal{J}_{N_H,2}=0$ changes the distribution by only 0.06% ($N_H=100$) and 0.28% ($N_H=101$), and that $N_H=85$, $N_L=171$ on $[-2.5,2.5]$ reproduces the phase-space vortex of a 60,000-point finite-difference reference.
+5. For the bump-on-tail instability with Legendre bounds $[4,15]$, used the weak bulk–beam coupling to justify strong Hermite damping ($\nu_H=10$), found that the conservation constraint changes the solution by only $6\times10^{-8}\%$ ($N_H=16$) and $3\times10^{-8}\%$ ($N_H=17$), and reproduced the reference beam filamentation with $N_H=16$, $N_L=112$.
+
+### Comments
+
+- Section 5: "When the Legendre velocity domain is finite (but symmetric), the conservation of total mass and energy (momentum) is satisfied if $N_H$ is even (odd)" reverses the parity derived in Eqs. (35)–(37), where mass and energy are conserved for odd $N_H$ and momentum for even $N_H$, and shown in Fig. 7, where $N_H=101$ conserves mass and energy and $N_H=100$ conserves momentum; the evident intended reading is odd (even).
+- Section 2.4: the text states that "each coefficient of order $n$ interacts with its nearest neighbors ($n\pm1$), except that the highest Hermite coefficient couples explicitly to all Legendre coefficients", but the term $\partial_x\phi\sum_{i=0}^{m-1}\sigma_{m,i}B_i$ in Eq. (24) couples each $B_m$ to every lower-order $B_i$ with $m-i$ odd, and Fig. 1, cited in the same sentence, draws such long-range arcs (for example from $B_0$ to $B_3$).

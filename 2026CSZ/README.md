@@ -1,0 +1,25 @@
+# 2026CSZ
+
+## Claude (September 2026)
+
+### Summary
+
+Discontinuous Galerkin (DG) methods with total-degree $\mathbb P^k$ elements on Cartesian meshes converge numerically at the optimal $L^2$ rate $\mathcal O(h^{k+1})$, but with $(k+1)(k+2)/2$ rather than $(k+1)^2$ unknowns per cell this had been proved only for constant coefficients or for small $k$. The authors analyse semidiscrete upwind $\mathbb P^k$ DG for $u_t+(\alpha u)_x+(\beta u)_y=0$ and $u_t+f(u)_x+g(u)_y=0$ with periodic boundaries, assuming uniform meshes and wind components $\alpha,\beta$ or $f',g'$ that do not change sign. A special projection is built from the truncated $\mathbb Q^k$ Radau expansion of the exact solution by keeping terms of index sum at most $k+1$ and removing their degree-$(k+1)$ part. Correction functions, defined by DG problems with cell-averaged coefficients and estimated through differences of expansion coefficients on the uniform mesh, then make the DG bilinear form of the error higher order. The $L^2$ error is $\mathcal O(h^{k+1})$, for all $k\ge0$ in the linear case; for $k\ge1$ and $u\in H^{k+3}$, cell-average and downwind-edge-average errors are $\mathcal O(h^{k+2})$ in the linear case and $\mathcal O(h^{\min(2k,k+2)})$ in the nonlinear case, which relies on an a priori $L^\infty$ error assumption justified for $k\ge1$. Experiments with $k\le3$ also show cell-average rates $2k+1$ for $k=1,2$, and loss of superconvergence on randomly perturbed meshes.
+
+### Contributions
+
+1. Proved optimal $L^2$ convergence of upwind $\mathbb P^k$ DG on uniform Cartesian meshes for every $k\ge0$ for linear variable-coefficient equations and, under an a priori error assumption justified for $k\ge1$, for nonlinear conservation laws, which the authors present as answering an open question.
+2. Isolated the degree-$(k+1)$ Radau terms that $\mathbb P^k$ cannot represent into a single term $\zeta_0$, and proved well-posedness of the operators that generate the correction functions $\zeta_1$ and $\zeta_2$ from it.
+3. Derived, for uniform meshes, estimates of mixed differences of the expansion coefficients of the exact solution between neighbouring cells, which provide the extra powers of $h$ in the error analysis.
+4. Established superconvergence of cell-average and downwind-edge-average errors for $\mathbb P^k$ DG, which the authors describe as the first superconvergence results for $\mathbb P^k$ DG methods.
+5. Observed in constant-coefficient, variable-coefficient, and nonlinear tests that cell-average errors reach the $\mathcal O(h^{2k+1})$ rate known for $\mathbb Q^k$ when $k=1,2$, whereas perturbing the mesh nodes by up to a quarter of the mesh size reduces all three errors to order $k+1$.
+
+### Comments
+
+- §1: the introduction states that the optimal order $\mathcal O(h^{k+1})$ "for DG method solving both linear and nonlinear equations holds true when $\mathbb P^k, k\ge0$ elements" are used, but the nonlinear analysis rests on the a priori assumption (3.3), which §3, including Remark 3.2, justifies only "for $k\ge1$".
+- §2.3, Eq. (2.26): the proof of Theorem 2.5 uses "$(Q_3u,v)_\tau=0$, $\forall v\in V_h$", but $Q_3u$ collects the terms $u_{p,q}(L_{i,p}-L_{i,p-1})(x)(L_{j,q}-L_{j,q-1})(y)$ with $p,q\le k$ and $p+q\ge k+2$, so for $k=2$ the term $p=q=2$ has nonzero inner product with $L_{i,1}(x)L_{j,1}(y)\in V_h$; the half of (2.26) for $\zeta_0$ holds, and whether the bound (2.25) survives without the $Q_3u$ half is not addressed.
+- §2.3: the estimate of $J_\tau$ relies on "$\pi_1^x\pi_1^y\alpha v_x\in V_h$, $\pi_1^x\pi_1^y\beta v_y\in V_h$ for $v\in V_h$", but $\pi_1^x\pi_1^y\alpha$ is bilinear and $v_x$ has degree up to $k-1$, so the product can have degree $k+1$ and in general lies outside $V_h=\mathbb P^k$.
+- §3, Eq. (3.2), and $A(w,v)$: the interface terms are printed as $\hat f(u_h)v^-|_{i+\frac12,y}-\hat f(u_h)v^-|_{i-\frac12,y}$ and $\tilde g(u_h)v^-|_{x,j+\frac12}-\tilde g(u_h)v^+|_{x,j+\frac12}$, whereas the linear scheme and $\mathcal H_\tau$ use the traces $v^+$ at $x_{i-\frac12}$ and $y_{j-\frac12}$; the evident intended terms are $v^+|_{i-\frac12,y}$ and $v^+|_{x,j-\frac12}$.
+- §4, Example 3: the nonlinear results are introduced with "Tables 1–2 present errors and the corresponding convergence rates", but Tables 1–2 hold the constant-coefficient results of Example 1; the nonlinear results are in Tables 5–6.
+- Table 6: the caption reads "Errors and convergence rates for the nonlinear equation in uniform meshes", identical to Table 5, although Example 3 describes the second table as the nonuniform-mesh results and Table 6 shows no superconvergence (for example, the $e_c$ rate for $k=1$ falls to 1.82); the intended caption is nonuniform meshes.
+- §5: the conclusion states that superconvergence of cell and downwind-edge averages "with an order of $O(h^{k+2})$" is derived for linear and nonlinear equations, but Theorem 3.1, Eq. (3.6), gives only $\mathcal O(h^{\min(2k,k+2)})$ for the nonlinear case, which is $\mathcal O(h^2)$, no better than optimal, for $k=1$.

@@ -1,0 +1,24 @@
+# 2026SRHK
+
+## Claude (September 2026)
+
+### Summary
+
+The authors develop a time integrator for a zonal quasineutral Vlasov model of strongly magnetized plasmas: kinetic ions in a constant magnetic field with adiabatic electrons, supplemented by the condition that no net charge is transported between flux surfaces (planes normal to $x$ in slab geometry), $\partial_t\langle n\rangle_F=0$. The electrostatic potential is split into a part $\tilde\phi$ with zero flux-surface average, given by the adiabatic-electron relation, and a flux-surface average $\langle\phi\rangle_F(x)$ chosen so that one semi-Lagrangian Strang splitting step (half velocity advection, spatial advection, half velocity advection) preserves $\langle n\rangle_F$. Tracing the density change back through the splitting with a Taylor expansion in the characteristic shifts gives an equation for $\langle\phi\rangle_F$ accurate to $O(h^3)$ per step, derived explicitly for a velocity grid rotating at the ion cyclotron frequency and outlined for a fixed grid. The BSL6D implementation uses high-order Lagrange interpolation and Fourier derivatives. In a 1D–2V equilibrium test, $\langle n\rangle_F$ stays constant after an initial jump and the cross-surface particle flux converges at second order in the time step. In 2D–2V runs, simulated ion Bernstein wave spectra agree qualitatively with analytic dispersion relations. The authors observe late-time noise growth and leave stability and well-posedness analysis open.
+
+### Contributions
+
+1. Extended the adiabatic-electron quasineutral model of Räth and Hallatschek with a net-zero charge transport constraint enforced through a flux-surface-averaged potential, which also produces zonal radial electric fields.
+2. Derived an explicit equation for $\langle\phi\rangle_F$ in terms of the density, current, stress tensor, and a third-order moment of the distribution by combining a multi-index Taylor expansion of the spatial shift with an integral transformation for the velocity shift.
+3. Showed that the final velocity half-step leaves the density unchanged, so only the first half-step and the spatial advection enter the constraint, while keeping the full Strang step to retain second-order convergence.
+4. Derived the linear dispersion relations of the constrained model for neutralized ion Bernstein waves along the flux surfaces and pure ion Bernstein waves across them.
+5. Reproduced pure ion Bernstein waves in simulation, which the authors state had not been done before, and maintained the continuity condition for more than 20000 time steps.
+
+### Comments
+
+- Section 2, text after Eq. (1): the density is defined by "$n_0-n(\mathbf{x},t)=\int f(\mathbf{x},\mathbf{v},t)\,\mathrm{d}^3v$", which conflicts with the same sentence's split of $f$ into a background $n_0$ and a perturbation $n$, with Algorithm 1 ($\phi=\int f\,\mathrm{d}^3v-\langle\int f\,\mathrm{d}^3v\rangle_F+\langle\phi\rangle_F$), and with Section 4.1 ($n(x,t)=\int f\,\mathrm{d}^2v$); the evident intended reading is $n_0+n=\int f\,\mathrm{d}^3v$.
+- Section 3.1, first paragraph: "In section 4 we observe, that the rotating grid is superior with respect to accuracy and stability against the discretization on the physical domain", but Section 4 presents only rotating-grid results (Figs. 1 and 2), and the end of Section 3.1 attributes this superiority to Ref. [25].
+- Section 4.1: the potential said to maintain the equilibrium, $\phi(x)=n(x)-n_0=\int f\,\mathrm{d}^2v-n_0$, has the opposite sign to that required by Eq. (24) for the initial state $(1+0.01\sin(k_jx))f_M$ to remain stationary, since the pressure and electric forces cancel only for $\partial_x\phi=-(T/e)\,\partial_x\ln n$; unresolved.
+- Section 4.1: "$k_j=jL_x/2\pi$" has the dimension of length and does not give a mode periodic on $[0,L_x]$; the evident intended reading is $k_j=2\pi j/L_x$.
+- Appendix A.2, Eqs. (A.17)–(A.18): the stated intermediate factors do not produce the normalization of Eq. (A.20): $\int_0^{2\pi}e^{i(p'-p)\varphi}\,\mathrm{d}\varphi$ equals $2\pi\delta_{p,p'}$, not $\delta_{p,p'}$; the prefactor $n_0/(\pi^{3/2}v_\mathrm{th}^3)$ does not normalize $e^{-v^2/(2v_\mathrm{th}^2)}$; and $\int_0^\infty e^{-v_\parallel^2/(2v_\mathrm{th}^2)}\,\mathrm{d}v_\parallel=\sqrt{\pi/2}\,v_\mathrm{th}$, not $\sqrt{\pi}\,v_\mathrm{th}$, with the $v_\parallel$ integral needing the full real line; together they give $n_0/\pi$ in place of $n_0$.
+- Appendix A.3, Eq. (A.21): the step from $\hat\phi_1=\hat\phi_1e^{-k_y^2}\sum_p\frac{p}{\omega-p}I_p(k_y^2)$ uses the identity "$\sum_{p=-\infty}^{\infty}I_p(x)=1$", whereas $\sum_pI_p(x)=e^x$; with the correct identity the preceding line gives $e^{-k_y^2}\sum_p\frac{\omega}{\omega-p}I_p(k_y^2)=2$, not the printed $0$, which would instead follow from $\hat\phi_1=-\hat n_1$.

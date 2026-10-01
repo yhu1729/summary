@@ -1,0 +1,19 @@
+# 2026VPBA
+
+## Claude (September 2026)
+
+### Summary
+
+The authors compare the optimal convergence rates of two classes of distributed solvers for $Ax=b$, $A\in\mathbb{R}^{N\times n}$, whose rows are partitioned among $m$ machines coordinated by a taskmaster: projection-based methods, chiefly Accelerated Projection-Based Consensus (APC), whose known rate depends on $\kappa_+(S)$ for $S=\sum_i A_i^\dagger A_i$, and gradient-based methods, chiefly the Distributed Heavy-Ball Method (D-HBM), whose rate depends on $\kappa(A^\top A)$. They introduce cross-machine angular heterogeneity $\theta_H$, the smallest principal angle between the row spaces of two machines, and local angular heterogeneity $\phi_{\min}$, the smallest angle between two rows on one machine. Mutually orthogonal row spaces give $\kappa_+(S)=1$, so APC converges in one step; in general $\kappa_+(S)\le(1+(m-1)\cos\theta_H)/(1-(m-1)\cos\theta_H)$ when $(m-1)\cos\theta_H<1$, and $\kappa(S)\ge1/\sin^2\theta_H$ for square invertible $A$. Since $\kappa(A^\top A)\ge1/\sin^2\phi_{\min}$, APC is favored over D-HBM when cross-machine heterogeneity is high and local heterogeneity low; the authors leave other regimes partly inconclusive. Monte Carlo experiments with square Gaussian matrices show APC faster than D-HBM, approaching it as $m$ grows, and nearly insensitive to $n$ for large $n$. Numerical evaluation suggests $\theta_H\to\pi/2$ as $n\to\infty$ for Gaussian data with fixed local size $p$, but the authors state this is too slow by itself to guarantee $(m-1)\cos\theta_H<1$, and their lower bounds for projection methods require square $A$.
+
+### Contributions
+
+1. Gave a distributed procedure (Algorithm 3.2) that computes $\theta_H$ from local QR factorizations of $A_i^\top$ and SVDs of $Q_i^\top Q_j$, costing $O(Nnp)$ in parallel against $O(N^2n)$ for the centralized loop when each machine holds $O(p)$ rows.
+2. Bounded $\kappa_+(S)$ independently of $m$ by $(2+D)/(2-D)$ with $D=(N-p)\cos\theta_H+\sqrt{(N-p)^2\cos^2\theta_H+4(N-p)p\cos\theta_H}$ for any machine holding $p$ equations when $D<2$, using a QR factorization of the stacked orthonormal bases, the generalized matrix determinant lemma, and Gershgorin's theorem.
+3. Proved for any full-column-rank $A$ that $\kappa(A)\ge\max_k\|\tilde a_k\|/\min_\ell\{\|\tilde a_\ell\|\sin\gamma^{(\ell)}_{\min}\}$ in terms of column norms and inter-column angles, with a row version for invertible square submatrices, attained with equality by diagonal matrices and implying that one row of atypical norm makes $\kappa(A^\top A)$ large while leaving APC unaffected.
+4. Converted the bounds into explicit rate bounds for the Mou–Liu–Morse, block Cimmino, APC, DGD, D-NAG, and D-HBM methods, e.g. $2/(1+\sin\theta_H)-1\le\rho_{\mathrm{APC}}\le(m-1)\cos\theta_H/(1+\sqrt{1-(m-1)^2\cos^2\theta_H})$, and derived the sufficient condition $2/(1+1/((m-1)\cos\theta_H))<\cos^2\phi_{\min}$ for $\rho_{\mathrm{APC}}<\rho_{\mathrm{HBM}}$.
+5. Constructed a block-diagonal system in which D-HBM is strictly slower than one-step APC unless every $A_i^\top A_i=cI$ with a common $c$, and the system $A=J_n-\varepsilon I_n$, in which $\theta_H$ and $\phi_{\min}$ both tend to zero as $\varepsilon\to0$ and both methods become arbitrarily slow.
+
+### Comments
+
+- Section 6, Experiment 1, Key Inference 3: "APC converges faster when the coefficient mean $\mu$ is increased", but in Figure 3 $\rho_{\mathrm{APC}}$ at $\mu=1$ is below its $\mu=0$ value only for $m\le10$ (about 0.9918 versus 0.9955 at $m=2$), about equal at $m=12$, and above it for $m\ge15$ (about 0.9987 versus 0.9976 at $m=60$ and 0.9989 versus 0.9976 at $m=120$); what holds for every $m$ is a larger gap between APC and D-HBM at $\mu=1$, which the experiment's setup paragraph anticipates, so whether the absolute or the relative statement was intended is unresolved.
